@@ -1,0 +1,14 @@
+# env
+.claude/
+.venv/
+logs/
+utils/
+
+# projects
+projects/*
+!projects/*.sh
+!projects/README.md
+
+# private
+_docs/
+.env

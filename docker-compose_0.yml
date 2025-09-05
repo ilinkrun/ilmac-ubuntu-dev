@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  ilmac-ubuntu-dev:
+    build: .
+    container_name: ilmac-ubuntu-dev
+    restart: unless-stopped
+    ports:
+      # 포트 범위 11000-11999를 호스트와 컨테이너 간 매핑
+      - "11000-11999:11000-11999"
+    volumes:
+      # NAS 전체 볼륨을 /nas에 마운트
+      - /volume1:/nas
+      # 현재 디렉토리를 /_exp에 마운트
+      - ./:/_exp
+    stdin_open: true
+    tty: true
+    environment:
+      # github 설정(jna-cli)
+      - ENV_GITHUB_OWNER=${ENV_GITHUB_OWNER}
+      - ENV_GITHUB_REPO=${ENV_GITHUB_REPO}
+      - ENV_GITHUB_TOKEN=${ENV_GITHUB_TOKEN}
+
+      # MySQL 설정
+      - MYSQL_HOST=${MYSQL_HOST}
+      - MYSQL_PORT=${MYSQL_PORT}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_BID_DATABASE=${MYSQL_BID_DATABASE}
+    # SSH 및 cron 서비스 시작 후 컨테이너 유지
+    command: >
+      /bin/sh -c "service ssh start && 
+                  service cron start && 
+                  /_exp/projects/bid-notice-web_entrypoint.sh &
+                  tail -f /dev/null"
+    networks:
+      - dev-network
+
+networks:
+  dev-network:
+    driver: bridge

@@ -1,0 +1,1 @@
+0 10,22 * * * /_exp/projects/bid-notice-web/backend/scripts/spider.sh  >> /_exp/logs/spider_list.log 2>&1
