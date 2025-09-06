@@ -7,15 +7,16 @@ services:
     restart: unless-stopped
     ports:
       # SSH
-      - "11001:11001"
+      - "${SV_PORT_SSH}:${SV_PORT_SSH}"
       # Frontend
-      - "11501:3000"  # production
-      - "11502:3002"  # development
+      ##  bid-notice-web
+      - "${FE_PORT_BID_NOTICE_NEXTJS}:${FE_PORT_BID_NOTICE_NEXTJS}"  # bid-notice-web:nextjs
       # Backend servers
-      - "11301:1301"  # spider server
-      - "11302:1302"  # mysql server  
-      - "11303:1303"  # bid server
-      - "11307:1307"  # board server
+      ##  bid-notice-web
+      - "${BE_PORT_BID_NOTICE_SPIDER}:${BE_PORT_BID_NOTICE_SPIDER}"  # bid-notice-web:spider server
+      - "${BE_PORT_BID_NOTICE_MYSQL}:${BE_PORT_BID_NOTICE_MYSQL}"  # bid-notice-web:mysql server
+      - "${BE_PORT_BID_NOTICE_BID}:${BE_PORT_BID_NOTICE_BID}"  # bid-notice-web:bid server
+      - "${BE_PORT_BID_NOTICE_BOARD}:${BE_PORT_BID_NOTICE_BOARD}"  # bid-notice-web:board server
     volumes:
       # NAS 전체 볼륨을 /nas에 마운트
       - /volume1:/nas
