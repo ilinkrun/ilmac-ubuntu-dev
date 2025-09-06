@@ -29,8 +29,7 @@
 #     echo "No cron jobs to set up. Crontab file not found."
 # fi
 
-# !playwright install(예정: RUN으로 설치 / 설치된 playwright를 PATH로 설정하기)
-cd /_exp/projects/bid-notice-web/backend && uv run python -m playwright install chromium && 
+# Playwright is now installed globally in Docker image 
 
 # # start backend servers in parallel
 # cd /_exp/projects/bid-notice-web/backend/src && nohup uv run server_spider.py &

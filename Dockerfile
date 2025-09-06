@@ -4,24 +4,24 @@ ENV DEBIAN_FRONTEND=noninteractive
 ENV TZ=Asia/Seoul
 
 RUN apt-get update && apt-get install -y \
-    openssh-server \
-    curl \
-    wget \
-    git \
-    vim \
-    nano \
-    sudo \
-    cron \
-    python3 \
-    python3-pip \
-    nodejs \
-    npm \
-    ca-certificates \
-    gnupg \
-    lsb-release \
-    libxml2-dev \
-    libxslt-dev \
-    && rm -rf /var/lib/apt/lists/*
+  openssh-server \
+  curl \
+  wget \
+  git \
+  vim \
+  nano \
+  sudo \
+  cron \
+  python3 \
+  python3-pip \
+  nodejs \
+  npm \
+  ca-certificates \
+  gnupg \
+  lsb-release \
+  libxml2-dev \
+  libxslt-dev \
+  && rm -rf /var/lib/apt/lists/*
 
 # Create python symlink to python3
 RUN ln -s /usr/bin/python3 /usr/bin/python
@@ -37,11 +37,26 @@ RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | b
 RUN npm install -g @anthropic-ai/claude-code
 RUN npm install -g jna-cli
 
-# Install Playwright dependencies
-# RUN npx -y playwright@latest install-deps
+# Install Playwright dependencies and Chromium
+RUN apt-get update && apt-get install -y \
+  libnss3 \
+  libatk-bridge2.0-0 \
+  libdrm2 \
+  libxkbcommon0 \
+  libgtk-3-0 \
+  libgbm-dev \
+  libasound2 \
+  && rm -rf /var/lib/apt/lists/*
 
-# !!![수정요] playwright install(예정: RUN으로 설치 / 설치된 playwright를 PATH로 설정하기)
-RUN cd /_exp/projects/bid-notice-web/backend && uv run python -m playwright install chromium 
+# Create working directory and install Playwright globally
+WORKDIR /opt/playwright
+RUN python -m pip install playwright==1.40.0
+RUN python -m playwright install chromium
+
+# Set Playwright environment variables with fixed path
+ENV PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
+# Chromium version is tied to Playwright version (1.40.0 uses chromium-1109)
+ENV CHROMIUM_EXECUTABLE_PATH=/ms-playwright/chromium-1109/chrome-linux/chrome 
 
 # set ssh config
 RUN mkdir /var/run/sshd
