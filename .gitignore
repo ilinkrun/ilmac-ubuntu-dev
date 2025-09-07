@@ -3,6 +3,7 @@
 .venv/
 logs/
 utils/
+ide/
 
 # projects
 projects/*

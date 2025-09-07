@@ -45,24 +45,27 @@ RUN apt-get update && apt-get install -y \
   libxkbcommon0 \
   libgtk-3-0 \
   libgbm-dev \
-  libasound2 \
+  libasound2t64 \
   && rm -rf /var/lib/apt/lists/*
+
+# Set Playwright environment variables before installation
+ENV PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
 
 # Create working directory and install Playwright globally
 WORKDIR /opt/playwright
-RUN python -m pip install playwright==1.40.0
+RUN python -m pip install playwright==1.40.0 --break-system-packages
+
+# Create the browsers directory and install with correct path
+RUN mkdir -p /ms-playwright
 RUN python -m playwright install chromium
 
-# Set Playwright environment variables with fixed path
-ENV PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
 # Chromium version is tied to Playwright version (1.40.0 uses chromium-1109)
-ENV CHROMIUM_EXECUTABLE_PATH=/ms-playwright/chromium-1109/chrome-linux/chrome 
+# ENV CHROMIUM_EXECUTABLE_PATH=/ms-playwright/chromium-1109/chrome-linux/chrome 
+ENV CHROMIUM_EXECUTABLE_PATH=/ms-playwright/chromium-1091/chrome-linux/chrome
 
-# set ssh config
+# set ssh config (basic setup only)
 RUN mkdir /var/run/sshd
-RUN echo 'root:password' | chpasswd
 RUN sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
-RUN sed -i 's/^#Port .*/Port 11001/' /etc/ssh/sshd_config
 RUN sed -i 's/#PasswordAuthentication yes/PasswordAuthentication yes/' /etc/ssh/sshd_config
 
 WORKDIR /root

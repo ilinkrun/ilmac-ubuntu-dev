@@ -7,7 +7,7 @@ services:
     restart: unless-stopped
     ports:
       # SSH
-      - "${SV_PORT_SSH}:${SV_PORT_SSH}"
+      - "${SV_SSH_PORT}:${SV_SSH_PORT}"
       # Frontend
       ##  bid-notice-web
       - "${FE_PORT_BID_NOTICE_NEXTJS}:${FE_PORT_BID_NOTICE_NEXTJS}"  # bid-notice-web:nextjs
@@ -22,9 +22,22 @@ services:
       - /volume1:/nas
       # 현재 디렉토리를 /_exp에 마운트
       - ./:/_exp
+      # VSCode 및 Cursor 확장 프로그램 지속성을 위한 볼륨
+      - ./ide/.cursor-server:/root/.cursor-server
+      - ./ide/.vscode-server:/root/.vscode-server
+      # bashrc 설정 파일 마운트
+      # - ./configs/.bashrc:/root/.bashrc
+      # - ./configs/crontab:/etc/cron.d/app-crontab
+      # - "${NAS_CURSOR_SERVER_PATH}:/root/.cursor-server"
+      # - "${NAS_VSCODE_SERVER_PATH}:/root/.vscode-server"
+
     stdin_open: true
     tty: true
     environment:
+      # SSH 설정
+      - SSH_PORT=${SV_SSH_PORT}
+      - ROOT_PASSWORD=${SV_SSH_ROOT_PASSWORD}
+
       # github 설정(jna-cli)
       - ENV_GITHUB_OWNER=${ENV_GITHUB_OWNER}
       - ENV_GITHUB_REPO=${ENV_GITHUB_REPO}
@@ -39,13 +52,21 @@ services:
       - MYSQL_BID_DATABASE=${MYSQL_BID_DATABASE}
     # SSH 및 cron 서비스 시작 후 컨테이너 유지
     command: >
-      /bin/sh -c "service ssh start && 
-                  service cron start && 
-                  /_exp/projects/bid-notice-web_entrypoint.sh &
-                  tail -f /dev/null"
+      /bin/sh -c "
+        echo 'root:'$$ROOT_PASSWORD | chpasswd &&
+        sed -i 's/^#Port .*/Port '$$SSH_PORT'/' /etc/ssh/sshd_config &&
+        sed -i 's/^Port .*/Port '$$SSH_PORT'/' /etc/ssh/sshd_config &&
+        service ssh start && 
+        service cron start && 
+        /_exp/projects/bid-notice-web_entrypoint.sh &
+        tail -f /dev/null"
     networks:
       - dev-network
 
 networks:
   dev-network:
     driver: bridge
+
+volumes:
+  vscode-server-extensions:
+  cursor-server-extensions:
