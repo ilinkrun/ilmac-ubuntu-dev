@@ -26,8 +26,8 @@ services:
       - ./ide/.cursor-server:/root/.cursor-server
       - ./ide/.vscode-server:/root/.vscode-server
       # bashrc 설정 파일 마운트
-      # - ./configs/.bashrc:/root/.bashrc
-      # - ./configs/crontab:/etc/cron.d/app-crontab
+      - ./configs/.bashrc:/root/.bashrc
+      - ./configs/crontab:/etc/cron.d/app-crontab
       # - "${NAS_CURSOR_SERVER_PATH}:/root/.cursor-server"
       # - "${NAS_VSCODE_SERVER_PATH}:/root/.vscode-server"
 
@@ -50,14 +50,10 @@ services:
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
       - MYSQL_DATABASE=${MYSQL_DATABASE}
       - MYSQL_BID_DATABASE=${MYSQL_BID_DATABASE}
-    # SSH 및 cron 서비스 시작 후 컨테이너 유지
+    # 서비스 시작 후 컨테이너 유지
     command: >
       /bin/sh -c "
-        echo 'root:'$$ROOT_PASSWORD | chpasswd &&
-        sed -i 's/^#Port .*/Port '$$SSH_PORT'/' /etc/ssh/sshd_config &&
-        sed -i 's/^Port .*/Port '$$SSH_PORT'/' /etc/ssh/sshd_config &&
-        service ssh start && 
-        service cron start && 
+        /_exp/docker-start.sh &&
         /_exp/projects/bid-notice-web_entrypoint.sh &
         tail -f /dev/null"
     networks:
@@ -66,7 +62,3 @@ services:
 networks:
   dev-network:
     driver: bridge
-
-volumes:
-  vscode-server-extensions:
-  cursor-server-extensions:
