@@ -3,8 +3,12 @@ FROM ubuntu:24.04
 ENV DEBIAN_FRONTEND=noninteractive
 ENV TZ=Asia/Seoul
 
+# 시간대 설정
+RUN apt-get update && apt-get install -y tzdata
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
 # 한글 locale 설정
-RUN apt-get update && apt-get install -y locales
+RUN apt-get install -y locales
 RUN locale-gen ko_KR.UTF-8
 ENV LANG=ko_KR.UTF-8
 ENV LANGUAGE=ko_KR:ko

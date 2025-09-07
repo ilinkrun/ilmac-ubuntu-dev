@@ -44,23 +44,3 @@ function mkcd() {
 }
 
 echo "Bash configuration loaded successfully."
-
-# cd /app
-
-# if ! netstat -tuln | grep ":11302" ; then
-#   nohup uvicorn server_mysql:app --reload --host=0.0.0.0 --port=11302 > output.log 2>&1 &
-# fi
-
-# if ! netstat -tuln | grep ":11301" ; then
-#   nohup uvicorn server_spider:app --reload --host=0.0.0.0 --port=11301 > output.log 2>&1 &
-# fi
-
-# if ! netstat -tuln | grep ":11303" ; then
-#   nohup uvicorn server_bid:app --reload --host=0.0.0.0 --port=11303 > output.log 2>&1 &
-# fi
-
-# if ! netstat -tuln | grep ":11307" ; then
-#   nohup uvicorn server_board:app --reload --host=0.0.0.0 --port=11307 > output.log 2>&1 &
-# fi
-
-# service cron restart

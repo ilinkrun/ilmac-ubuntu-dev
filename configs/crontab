@@ -1,4 +1,4 @@
 # 입찰공고 크롤링 스크립트 자동 실행
 ## 매일 오전 9시 30분, 오후 9시 30분에 spider_list.sh 실행, 로그 기록(/_exp/logs/spider_list.log)
 # 예)10,22시: 0 10,22 * * * /_exp/projects/bid-notice-web/backend/spider_list.sh >> /_exp/logs/spider_list.log 2>&1
-0 10,22 * * * /_exp/projects/bid-notice-web/spider_list.sh >> /_exp/logs/spider_list.log 2>&1
+20 16,22 * * * /_exp/projects/bid-notice-web/spider_list.sh >> /_exp/logs/spider_list.log 2>&1

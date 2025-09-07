@@ -24,11 +24,13 @@ if [ -f "/etc/cron.d/app-crontab" ]; then
     
     # cron 서비스 시작
     echo "Starting cron service..."
+    service rsyslog start
     service cron start
     
-    # cron 로그를 /_exp/logs/cron.log로 리다이렉트
+    # cron 로그를 별도 파일로 복사
     echo "Setting up cron logging to /_exp/logs/cron.log..."
-    (cron -f 2>&1 | tee -a /_exp/logs/cron.log) &
+    mkdir -p /_exp/logs
+    (tail -f /var/log/syslog | grep CRON >> /_exp/logs/cron.log) &
     
     echo "Cron setup completed!"
 else
